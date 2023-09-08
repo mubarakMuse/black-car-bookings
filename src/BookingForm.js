@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'; // Import the useHistory hook
 
 
 const BookingForm = () => {
+    console.log(process.env.REACT_APP_GOOGLE_MAPS_API_KEY)
     const google = window.google;
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
