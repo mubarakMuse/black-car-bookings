@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import {
   AppBar,
   Toolbar,
@@ -11,8 +10,8 @@ import {
   ListItemText,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-
 import YourLogo from './logo.svg'; // Change to the actual path of your logo image
+import { Link } from 'react-router-dom';
 
 const NavBar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -70,14 +69,15 @@ const NavBar = () => {
       </Toolbar>
       <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
         <List>
-        <List>
           <ListItem button component={Link} to="/">
-            <ListItemText primary="Home" />
+            <ListItemText primary="Home" style={{ color: 'black' }} />
           </ListItem>
-          <ListItem button component={Link} to="/view-requests">
-            <ListItemText primary="View Ride Requests" />
+          <ListItem button component={Link} to="/book">
+            <ListItemText primary="Book a ride" style={{ color: 'black' }} />
           </ListItem>
-        </List>
+          <ListItem button component={Link} to="/requests">
+            <ListItemText primary="View Ride Requests" style={{ color: 'black' }} />
+          </ListItem>
         </List>
       </Drawer>
     </AppBar>

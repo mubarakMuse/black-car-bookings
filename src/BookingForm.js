@@ -1,13 +1,10 @@
-// BookingForm.js
 import React, { useRef, useState } from 'react';
-import { Button, Container, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
-import { useJsApiLoader, GoogleMap, Autocomplete, DirectionsRenderer } from '@react-google-maps/api';
+import { Button, Container, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Dialog, DialogTitle, DialogContent, DialogActions, Typography } from '@mui/material';
+import { useJsApiLoader, Autocomplete, DirectionsRenderer, GoogleMap } from '@react-google-maps/api';
 import './BookingForm.css';
 import { useNavigate } from 'react-router-dom'; // Import the useHistory hook
 
-
 const BookingForm = () => {
-    console.log(process.env.REACT_APP_GOOGLE_MAPS_API_KEY)
     const google = window.google;
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -27,7 +24,6 @@ const BookingForm = () => {
         paymentMethod: '',
         totalCost: 0
     });
-    
 
     const [directionsResponse, setDirectionsResponse] = useState(null);
     const [openModal, setOpenModal] = useState(false);
@@ -35,43 +31,39 @@ const BookingForm = () => {
     const originRef = useRef();
     const destinationRef = useRef();
 
-    const center = { lat: 44.8831, lng: -93.2289 }
-
     async function calculateRoute() {
         if (formData.pickupLocation === '' || formData.dropoffLocation === '') {
             return;
         }
-    
+
         const directionsService = new google.maps.DirectionsService();
         const results = await directionsService.route({
             origin: formData.pickupLocation,
             destination: formData.dropoffLocation,
             travelMode: google.maps.TravelMode.DRIVING,
         });
-    
+
         setDirectionsResponse(results);
-        
+
         // Update the formData with duration, distance, and totalCost
         const newFormData = {
             ...formData,
             duration: results.routes[0].legs[0].duration.text,
             distance: results.routes[0].legs[0].distance.text,
         };
-    
+
         // Calculate cost based on distance (you can customize this logic)
         const distanceinMiles = results.routes[0].legs[0].distance.value / 1609;
-    
+
         const costPerMile = 10; // Customize this rate
         const totalCost = distanceinMiles * costPerMile;
-    
+
         // Add the total cost to the formData
         newFormData.totalCost = totalCost < 70 ? 70 : totalCost;
-    
+
         // Update the state with the new formData
         setFormData(newFormData);
     }
-    
-
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setFormData((prevData) => ({
@@ -101,17 +93,17 @@ const BookingForm = () => {
     const saveRequest = (request) => {
         // Retrieve existing requests from local storage
         const existingRequests = JSON.parse(localStorage.getItem('requests')) || [];
-      
+
         // Add the new request to the existing requests
         const updatedRequests = [...existingRequests, request];
-      
+
         // Save the updated requests back to local storage
         localStorage.setItem('requests', JSON.stringify(updatedRequests));
-      };
+    };
+
     const handleConfirmBooking = () => {
         // Close the dialog
-     
-        
+
         saveRequest(formData); // Save the form data as a request
 
         // Navigate to the confirmation page after a delay (e.g., 2 seconds)
@@ -128,8 +120,42 @@ const BookingForm = () => {
     return (
         <Container>
             <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={12}>
                     <form onSubmit={handleSubmit} className="booking-form">
+                        <Typography variant="h5">Enter Your Booking Details</Typography>
+                        <FormControl fullWidth margin="normal">
+                            <TextField
+                                type="text"
+                                id="fullName"
+                                name="fullName"
+                                value={formData.fullName}
+                                onChange={handleInputChange}
+                                placeholder='Full Name'
+                                required
+                            />
+                        </FormControl>
+                        <FormControl fullWidth margin="normal">
+                            <TextField
+                                type="email"
+                                id="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleInputChange}
+                                placeholder='Email'
+                                required
+                            />
+                        </FormControl>
+                        <FormControl fullWidth margin="normal">
+                            <TextField
+                                type="tel"
+                                id="phone"
+                                name="phone"
+                                value={formData.phone}
+                                onChange={handleInputChange}
+                                placeholder='Phone'
+                                required
+                            />
+                        </FormControl>
                         <FormControl fullWidth margin="normal">
                             <Autocomplete
                                 onLoad={(autocomplete) => (originRef.current = autocomplete)}
@@ -145,6 +171,8 @@ const BookingForm = () => {
                                     onChange={handleInputChange}
                                     placeholder='Pickup Location'
                                     required
+                                    fullWidth
+
                                 />
                             </Autocomplete>
                         </FormControl>
@@ -163,6 +191,8 @@ const BookingForm = () => {
                                     onChange={handleInputChange}
                                     placeholder='Dropoff Location'
                                     required
+                                    fullWidth
+
                                 />
                             </Autocomplete>
                         </FormControl>
@@ -216,60 +246,12 @@ const BookingForm = () => {
                                 <MenuItem value="creditCard">Credit Card</MenuItem>
                             </Select>
                         </FormControl>
-                        <FormControl fullWidth margin="normal">
-                            <TextField
-                                type="text"
-                                id="fullName"
-                                name="fullName"
-                                value={formData.fullName}
-                                onChange={handleInputChange}
-                                placeholder='Full Name'
-                                required
-                            />
-                        </FormControl>
-                        <FormControl fullWidth margin="normal">
-                            <TextField
-                                type="email"
-                                id="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleInputChange}
-                                placeholder='Email'
-
-                                required
-                            />
-                        </FormControl>
-                        <FormControl fullWidth margin="normal">
-                            <TextField
-                                type="tel"
-                                id="phone"
-                                name="phone"
-                                value={formData.phone}
-                                onChange={handleInputChange}
-                                placeholder='Phone'
-
-                                required
-                            />
-                        </FormControl>
-                        <Button variant="contained" color="primary" type="submit">
+                        <Button             fullWidth
+variant="contained" color="primary" type="submit" style={{color:"white", backgroundColor: 'black' }} // Changed button background color to black
+                        >
                             Submit
                         </Button>
                     </form>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                    <GoogleMap
-                        center={center}
-                        zoom={15}
-                        mapContainerStyle={{ width: '100%', height: '400px' }}
-                        options={{
-                            zoomControl: false,
-                            streetViewControl: false,
-                            mapTypeControl: false,
-                            fullscreenControl: false,
-                        }}
-                    >
-                        {directionsResponse && <DirectionsRenderer directions={directionsResponse} />}
-                    </GoogleMap>
                 </Grid>
             </Grid>
 
@@ -278,23 +260,30 @@ const BookingForm = () => {
                 <DialogTitle>Booking Summary</DialogTitle>
                 <DialogContent>
                     <Container className="details-box">
-                        <p className="details-label">Full Name: {formData.fullName}</p>
-                        <p className="details-label">Email: {formData.email}</p>
-                        <p className="details-label">Phone Number: {formData.phone}</p>
-                        <p className="details-label">Pickup Location: {formData.pickupLocation}</p>
-                        <p className="details-label">Dropoff Location: {formData.dropoffLocation}</p>
-                        <p className="details-label">Date and Time: {formData.dateTime}</p>
-                        <p className="details-label">Type of Ride: {formData.rideType}</p>
-                        <p className="details-label">Distance: {formData.distance}</p>
-                        <p className="details-label">Duration: {formData.duration}</p>
-                        <p className="details-label">Total Cost: ${formData.totalCost.toFixed(2)} {formData.totalCost === 70 ? "[Minimum ride cost]" : null}</p>
-                        <p className="details-label">Payment Method: {formData.paymentMethod}</p>
-
+                        <Typography variant="h6">Your Booking Details</Typography>
+                        <p><strong>Full Name:</strong> {formData.fullName}</p>
+                        <p><strong>Email:</strong> {formData.email}</p>
+                        <p><strong>Phone Number:</strong> {formData.phone}</p>
+                        <Typography variant="h6">Ride Information</Typography>
+                        <p><strong>Pickup Location:</strong> {formData.pickupLocation}</p>
+                        <p><strong>Dropoff Location:</strong> {formData.dropoffLocation}</p>
+                        <p><strong>Date and Time:</strong> {formData.dateTime}</p>
+                        <p><strong>Type of Ride:</strong> {formData.rideType}</p>
+                        <p><strong>Number of Passengers:</strong> {formData.numPassengers}</p>
+                        <p><strong>Payment Method:</strong> {formData.paymentMethod}</p>
+                        {formData.distance && formData.duration && (
+                            <>
+                                <Typography variant="h6">Route Information</Typography>
+                                <p><strong>Distance:</strong> {formData.distance}</p>
+                                <p><strong>Duration:</strong> {formData.duration}</p>
+                                <p><strong>Total Cost:</strong> ${formData.totalCost.toFixed(2)} {formData.totalCost === 70 ? "[Minimum ride cost]" : null}</p>
+                            </>
+                        )}
                     </Container>
                     <GoogleMap
-                        center={center}
+                        center={formData.pickupLocation ? { lat: 44.8831, lng: -93.2289 } : null}
                         zoom={15}
-                        mapContainerStyle={{ width: '100%', height: '400px' }}
+                        mapContainerStyle={{ width: '100%', height: '300px' }}
                         options={{
                             zoomControl: false,
                             streetViewControl: false,
@@ -306,12 +295,20 @@ const BookingForm = () => {
                     </GoogleMap>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseModal} color="secondary">
+                    <Button onClick={handleCloseModal} color="primary" variant="outlined"             fullWidth
+
+                        style={{ borderColor: 'black', color: 'black' }} // Changed button background color to black
+                    >
                         Close
                     </Button>
-                    <Button onClick={handleConfirmBooking} color="primary">
-    Confirm Booking
-</Button>
+                    <Button             fullWidth
+onClick={handleConfirmBooking} color="primary" variant="contained"
+
+
+                        style={{ color:"white", backgroundColor: 'black' }} // Changed button background color to black
+                    >
+                        Confirm Booking
+                    </Button>
                 </DialogActions>
             </Dialog>
         </Container>
@@ -319,4 +316,3 @@ const BookingForm = () => {
 };
 
 export default BookingForm;
-
