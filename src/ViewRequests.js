@@ -22,6 +22,7 @@ const AccessCodeForm = ({ onAccessCodeSubmit }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Check if the access code is correct (replace with your actual access code)
+    console.log(process.env.REACT_APP_ACCESS_CODE)
     if (accessCode.trim() === process.env.REACT_APP_ACCESS_CODE) {
       onAccessCodeSubmit(true);
     } else {

@@ -5,6 +5,7 @@ import HomePage from './HomePage';
 import ConfirmationPage from './ConfirmationPage';
 import ViewRequests from './ViewRequests';
 import BookingForm from './BookingForm';
+import StickyFooter from './StickyFooter';
 
 const App = () => {
   return (
@@ -26,10 +27,7 @@ const App = () => {
             }
           />
         </Routes>
-        {/* Add a footer here */}
-        {/* <footer style={{ backgroundColor: 'black', color: 'white', padding: '10px', textAlign: 'center', marginTop: '20px' }}>
-          &copy; {new Date().getFullYear()} LuxeRide. All rights reserved.
-        </footer> */}
+    <StickyFooter/>
       </Router>
     </div>
   );
